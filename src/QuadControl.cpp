@@ -147,26 +147,18 @@ V3F QuadControl::RollPitchControl(V3F accelCmd, Quaternion<float> attitude, floa
   Mat3x3F R = attitude.RotationMatrix_IwrtB();
 
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
-  if ( collThrustCmd > 0 ) {
+
     float c =  - collThrustCmd / mass;
     float b_x, b_y;
     float b_x_dot, b_y_dot;
-    b_x = CONSTRAIN((accelCmd.x / c), -maxTiltAngle, maxTiltAngle);
-    b_y = CONSTRAIN((accelCmd.y / c), -maxTiltAngle, maxTiltAngle);
-    // b_x = CONSTRAIN(accelCmd.x / c, -0.5, 0.5);
-    // b_y = CONSTRAIN(accelCmd.y / c, -0.5, 0.5);
+    b_x = CONSTRAIN((accelCmd.x / c), -sin(maxTiltAngle), sin(maxTiltAngle));
+    b_y = CONSTRAIN((accelCmd.y / c), -sin(maxTiltAngle), sin(maxTiltAngle));
     b_x_dot = kpBank * (b_x - R(0,2));
     b_y_dot = kpBank * (b_y - R(1,2));
 
     pqrCmd.x = (R(1,0) * b_x_dot - R(0,0) * b_y_dot) / R(2,2);
     pqrCmd.y = (R(1,1) * b_x_dot - R(0,1) * b_y_dot) / R(2,2);
-    pqrCmd.z = 0.0;
-  }
-  else{
-      pqrCmd.x = 0.0;
-      pqrCmd.y = 0.0;
-      pqrCmd.z = 0.0;
-  }
+    
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
   return pqrCmd;
@@ -201,7 +193,7 @@ float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, flo
   integratedAltitudeError += pos_err * dt;
 
   vel_cmd = kpPosZ * pos_err + velZCmd;
-  vel_cmd = CONSTRAIN(vel_cmd, -maxAscentRate, maxDescentRate);
+  vel_cmd = CONSTRAIN(vel_cmd, -maxDescentRate, maxAscentRate);
 
   vel_err = vel_cmd - velZ;
   acc_cmd = kpVelZ * vel_err + accelZCmd + KiPosZ * integratedAltitudeError;
@@ -284,6 +276,7 @@ float QuadControl::YawControl(float yawCmd, float yaw)
       yawCmd = -fmodf(-yawCmd, 2*F_PI);
   }
   err = (yawCmd - yaw);
+  // Wrap the error in the range -pi to pi
   if (err > F_PI){
       err -= 2*F_PI;
   }
