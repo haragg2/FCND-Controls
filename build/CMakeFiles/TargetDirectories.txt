@@ -1,3 +1,0 @@
-/home/hardik/Documents/FCND/FCND-Controls-CPP/build/CMakeFiles/edit_cache.dir
-/home/hardik/Documents/FCND/FCND-Controls-CPP/build/CMakeFiles/rebuild_cache.dir
-/home/hardik/Documents/FCND/FCND-Controls-CPP/build/CMakeFiles/CPPSim.dir
