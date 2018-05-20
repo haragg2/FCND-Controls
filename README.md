@@ -95,8 +95,8 @@ At this point, the `kpPQR` parameter has to be tuned to stop the drone from flip
 
 
 This controller receives the commanded accelerations in x and y directions. And to achieve these accelerations
- we need to apply a P controller to the elements `R13` and `R23` of the [rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix) from world frame to body frame:
-(The roll pith control is implemented in [/src/QuadControl::::RollPitchControl method ](./src/QuadControl.cpp#L128-L165) from line 128 to 165)
+ we need to apply a P controller to the elements `R13` and `R23` of the [rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix) from world frame to body frame.\
+(The roll pitch control is implemented in [/src/QuadControl::::RollPitchControl method ](./src/QuadControl.cpp#L128-L165) from line 128 to 165)
 
 ![Roll and pitch P controller](./images/roll_pitch_p_controller.png)
 
