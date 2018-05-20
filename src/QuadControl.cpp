@@ -158,7 +158,7 @@ V3F QuadControl::RollPitchControl(V3F accelCmd, Quaternion<float> attitude, floa
 
     pqrCmd.x = (R(1,0) * b_x_dot - R(0,0) * b_y_dot) / R(2,2);
     pqrCmd.y = (R(1,1) * b_x_dot - R(0,1) * b_y_dot) / R(2,2);
-    
+
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
   return pqrCmd;
@@ -193,7 +193,7 @@ float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, flo
   integratedAltitudeError += pos_err * dt;
 
   vel_cmd = kpPosZ * pos_err + velZCmd;
-  vel_cmd = CONSTRAIN(vel_cmd, -maxDescentRate, maxAscentRate);
+  vel_cmd = CONSTRAIN(vel_cmd, -maxAscentRate, maxDescentRate);
 
   vel_err = vel_cmd - velZ;
   acc_cmd = kpVelZ * vel_err + accelZCmd + KiPosZ * integratedAltitudeError;
