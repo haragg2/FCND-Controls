@@ -18,8 +18,8 @@ outputs of different part of the controller otherwise things can go wrong when s
 limits are not implemented correctly. Instructions on how to use the simulator can be found in [How to use simulator](How_to_use_simulator.md). 
 There are in total five scenarios that cover all the aspects of the controller.
 
-- [/cpp/config/QuadControlParams.txt](./config/QuadControlParams.txt): This file contains all control gains and other desired tuning parameters.
-- [/cpp/src/QuadControl.cpp](./src/QuadControl.cpp): This file contains all of the code for the controller.
+- [/config/QuadControlParams.txt](./config/QuadControlParams.txt): This file contains all control gains and other desired tuning parameters.
+- [/src/QuadControl.cpp](./src/QuadControl.cpp): This file contains all of the code for the controller.
 
 ### Build and Run the code
 
@@ -58,7 +58,7 @@ make
 
 #### Scenario 1: Intro
 If the mass doesn't match the actual mass of the quad, it'll fall down. 
-So we tune the Mass parameter in [/cpp/config/QuadControlParams.txt](./config/QuadControlParams.txt) to make the vehicle more or less stay in the same spot.
+So we tune the Mass parameter in [/config/QuadControlParams.txt](./config/QuadControlParams.txt) to make the vehicle more or less stay in the same spot.
 
 ![C++ Scenario 1](./images/1.gif)
 
@@ -78,7 +78,7 @@ To accomplish this we implement:
 
 `F_0` to `F_3` are the individual motor's thrust, `tau(x,y,z)` are the moments along xyz axes.
 `F_t` is the total thrust, `kappa` is the drag/thrust ratio and `l` is the drone arm length over square root of 2.\
-(The calculation implementation for the motor commands is in [/cpp/src/QuadControl::GenerateMotorCommands method ](/cpp/src/QuadControl.cpp#L56-L90) from line 56 to 90)
+(The calculation implementation for the motor commands is in [/src/QuadControl::GenerateMotorCommands method ](./src/QuadControl.cpp#L56-L90) from line 56 to 90)
 
 **NOTE:** We are using NED coordinates ie, the `z` axis is inverted. This means the 
 yaw is defined positive when drones yaw clockwise looking from above.
@@ -87,7 +87,7 @@ yaw is defined positive when drones yaw clockwise looking from above.
  pitch rate and yaw rate.
  
 At this point, the `kpPQR` parameter has to be tuned to stop the drone from flipping.\
-(The body rate control is implemented in [/cpp/src/QuadControl::BodyRateControl method ](/cpp/src/QuadControl.cpp#L92-L125) from line 92 to 125)
+(The body rate control is implemented in [/src/QuadControl::BodyRateControl method ](./src/QuadControl.cpp#L92-L125) from line 92 to 125)
 
 * [RollPitchControl method](./src/QuadControl.cpp#L128-L165) - A P controller for the roll, pitch and yaw. 
 
@@ -96,7 +96,7 @@ At this point, the `kpPQR` parameter has to be tuned to stop the drone from flip
 
 This controller receives the commanded accelerations in x and y directions. And to achieve these accelerations
  we need to apply a P controller to the elements `R13` and `R23` of the [rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix) from world frame to body frame:
-(The roll pith control is implemented in [/cpp/src/QuadControl::::RollPitchControl method ](/cpp/src/QuadControl.cpp#L128-L165) from line 128 to 165)
+(The roll pith control is implemented in [/src/QuadControl::::RollPitchControl method ](./src/QuadControl.cpp#L128-L165) from line 128 to 165)
 
 ![Roll and pitch P controller](./images/roll_pitch_p_controller.png)
 
@@ -127,19 +127,19 @@ There are three methods to implement here:
 
 Here, c is the magnitude of acceleration produced by the motors thrust. We already included the direction of c 
 while subtracting the matrix.\
-(The altitude control is implemented in [/cpp/src/QuadControl::AltitudeControl method ](/cpp/src/QuadControl.cpp#L167-L208) from line 167 to 208)
+(The altitude control is implemented in [/src/QuadControl::AltitudeControl method ](./src/QuadControl.cpp#L167-L208) from line 167 to 208)
 
 * [LateralPositionControl](./src/QuadControl.cpp#L211-L254) Here we use a cascaded proportional controller: an inner one for velocity, 
 with gain Kv and an outer one with gain Kp to control accelerations in 
 `x` and `y` direction.\
-(The lateral position control is implemented in [/cpp/src/QuadControl::LateralPositionControl method ](/cpp/src/QuadControl.cpp#L211-L254) from line 211 to 254)
+(The lateral position control is implemented in [/src/QuadControl::LateralPositionControl method ](./src/QuadControl.cpp#L211-L254) from line 211 to 254)
 
 ![Cascaded controller equation](./images/cascaded_controller.png)
 
 * [YawControl](./src/QuadControl.cpp#L257-L292): This is a simple P controller which outputs the yaw rate (in body frame). We wrap the yaw error in range `[-pi, pi]`.
 
 When looking at a controller linearized for small motions, r is approximately equal to the yaw rate.  If we used a linearized controller for roll and pitch, the equations would also be much simpler, but we would have much larger control errors, so we need to take into account the attitude in those cases.  For yaw, with this type of control, we can get away with keeping the linearized assumption on the controller, which is why we pass yaw rate back directly without taking into account the attitude.\
-(The yaw control is implemented in [/cpp/src/QuadControl::YawControl method ](./src/QuadControl.cpp#L257-L292) from line 257 to 292)
+(The yaw control is implemented in [/src/QuadControl::YawControl method ](./src/QuadControl.cpp#L257-L292) from line 257 to 292)
 
 We start tuning for altitude controller using `kpPosZ` and `kpVelZ` and then move to tuning 
 the lateral controller by using `kpPosXY`, `kpVelXY`. In last we tune yaw controller with `kpYaw` 
